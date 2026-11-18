@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+/outputs/*
+!/outputs/blender-assembly/
+/outputs/blender-assembly/*
+!/outputs/blender-assembly/assets/
+/outputs/blender-assembly/assets/*
+!/outputs/blender-assembly/assets/*.glb
+!/outputs/blender-assembly/QA.md

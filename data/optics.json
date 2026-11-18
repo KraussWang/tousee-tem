@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "model": "透见 TEM 教学电子光学模型（V2）",
+    "units": "mm / rad；z 为全局值，+Z 向上",
+    "note": "近轴薄透镜模型，横向尺寸与角度为夸大的模型值。ol-pre / ol-post 的 z 与 f、各模式的 illumination 与 steps[].f 由 web/scripts/solve-optics.mjs 求解写入，勿手改"
+  },
+  "source": { "radius": 0.05, "halfAngle": 0.015 },
+  "scan": { "radius": 0.3 },
+  "elements": [
+    { "id": "source", "type": "source", "z": { "ref": "source" }, "name_zh": "枪虚光源" },
+    { "id": "cl1", "type": "lens", "z": { "ref": "cl.cl1" }, "name_zh": "第一聚光镜 CL1", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "cl2", "type": "lens", "z": { "ref": "cl.cl2" }, "name_zh": "第二聚光镜 CL2", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "cla", "type": "aperture", "z": { "ref": "cl.aperture" }, "name_zh": "聚光镜光阑" },
+    { "id": "cm", "type": "lens", "z": { "ref": "cl.cm" }, "name_zh": "会聚小透镜 CM", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "scan1", "type": "deflector", "z": { "ref": "ol.scan1" }, "name_zh": "第 1 扫描线圈" },
+    { "id": "scan2", "type": "deflector", "z": { "ref": "ol.scan2" }, "name_zh": "第 2 扫描线圈" },
+    { "id": "ol-pre", "type": "lens", "z": 10.2293, "name_zh": "物镜前场", "clearRadius": 5, "maxExcitation": 2, "group": "ol", "f": 9.7707 },
+    { "id": "specimen", "type": "specimen", "z": { "ref": "specimen" }, "name_zh": "试样" },
+    { "id": "ol-post", "type": "lens", "z": -10.2293, "name_zh": "物镜后场", "clearRadius": 5, "maxExcitation": 2, "group": "ol", "f": 9.7707 },
+    { "id": "ola", "type": "aperture", "z": { "ref": "ol.aperture" }, "name_zh": "物镜光阑" },
+    { "id": "saa", "type": "aperture", "z": { "ref": "sa" }, "name_zh": "选区光阑" },
+    { "id": "il1", "type": "lens", "z": { "ref": "il.il1" }, "name_zh": "第一中间镜 IL1", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "il2", "type": "lens", "z": { "ref": "il.il2" }, "name_zh": "第二中间镜 IL2", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "il3", "type": "lens", "z": { "ref": "il.il3" }, "name_zh": "第三中间镜 IL3", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "pl", "type": "lens", "z": { "ref": "pl.coil" }, "name_zh": "投影镜 PL", "clearRadius": 10, "maxExcitation": 2 },
+    { "id": "detector", "type": "detector", "z": { "ref": "vc.detector" }, "name_zh": "STEM 探测器面" },
+    { "id": "screen", "type": "screen", "z": { "ref": "large" }, "name_zh": "大荧光屏", "clearRadius": 80 }
+  ],
+  "apertures": {
+    "cla": { "radii": [0.05, 0.1, 0.3, 1.2], "host": "cl", "name_zh": "聚光镜光阑" },
+    "ola": { "radii": [0.15, 0.3, 0.6, 1.2], "host": "ol", "name_zh": "物镜光阑" },
+    "saa": { "radii": [0.5, 1.5, 3, 6], "host": "sa", "name_zh": "选区光阑" }
+  },
+  "detectors": [
+    { "id": "bf", "rInner": 0, "rOuter": 5, "name_zh": "明场 BF", "note": "收集透射锥中心部分" },
+    { "id": "abf", "rInner": 5, "rOuter": 10, "name_zh": "环形明场 ABF", "note": "明场盘外圈，轻元素可见（教学简化：与 BF 共用同心环）" },
+    { "id": "adf", "rInner": 10, "rOuter": 30, "name_zh": "环形暗场 ADF", "note": "收集布拉格衍射与中角散射" },
+    { "id": "haadf", "rInner": 30, "rOuter": 40, "name_zh": "高角环形暗场 HAADF", "note": "收集高角非相干散射，强度随 Z 增大（Z 衬度）" }
+  ],
+  "modes": [
+    {
+      "id": "tem-image",
+      "group": "tem",
+      "name_zh": "TEM 成像",
+      "illumination": { "cl1": 46.478873, "cl2": 30.588235, "cm": 46.666667 },
+      "steps": [
+        { "label": "M 60", "nominal": 60, "f": { "il1": 62.310582, "il2": 64.462974, "il3": 60.946933, "pl": 77.536371 } },
+        { "label": "M 175", "nominal": 175, "f": { "il1": 62.310582, "il2": 529.943833, "il3": 69.585011, "pl": 35.121293 } },
+        { "label": "M 270", "nominal": 270, "f": { "il1": 62.310582, "il2": 2954.116215, "il3": 72.191307, "pl": 25.010989 } }
+      ],
+      "defaultStep": 1,
+      "apertures": { "cla": 4, "ola": 0, "saa": 0 },
+      "description": "平行束照明；第一中间镜的物面是物镜像面（选区光阑面），屏上得到试样的放大像。"
+    },
+    {
+      "id": "tem-diff",
+      "group": "tem",
+      "name_zh": "TEM 衍射",
+      "illumination": { "cl1": 46.478873, "cl2": 30.588235, "cm": 46.666667 },
+      "steps": [
+        { "label": "L 195 mm", "nominal": 195, "f": { "il1": 42.508863, "il2": 13.552904, "il3": 13.665469, "pl": 36.108796 } },
+        { "label": "L 390 mm", "nominal": 390, "f": { "il1": 42.508863, "il2": 13.585373, "il3": 13.714723, "pl": 23.290318 } },
+        { "label": "L 790 mm", "nominal": 790, "f": { "il1": 42.508863, "il2": 13.61138, "il3": 13.642952, "pl": 13.597573 } }
+      ],
+      "defaultStep": 1,
+      "apertures": { "cla": 4, "ola": 0, "saa": 0 },
+      "description": "照明不变；第一中间镜减弱，物面上移到物镜后焦面，屏上得到衍射花样。"
+    },
+    {
+      "id": "stem-ronchi",
+      "group": "stem",
+      "name_zh": "STEM Ronchigram",
+      "illumination": { "cl1": 46.478873, "cl2": 30.688493, "cm": null },
+      "steps": [
+        { "label": "L 52 mm", "nominal": 52, "f": { "il1": 75.691079, "il2": 56.396798, "il3": 28.97186, "pl": 28.985772 } },
+        { "label": "L 103 mm", "nominal": 103, "f": { "il1": 75.691079, "il2": 148.643772, "il3": 25.402031, "pl": 25.402494 } },
+        { "label": "L 206 mm", "nominal": 206, "f": { "il1": 75.691079, "il2": 2578.47564, "il3": 21.354998, "pl": 21.355421 } }
+      ],
+      "defaultStep": 1,
+      "apertures": { "cla": 2, "ola": 0, "saa": 0 },
+      "apertureMax": { "cla": 2 },
+      "description": "CM 关闭，物镜前场把 CL2 交叉点缩小成会聚探针；探针静止，后焦面投到荧光屏，明场盘内是试样的阴影像。"
+    },
+    {
+      "id": "stem-scan",
+      "group": "stem",
+      "name_zh": "STEM 扫描成像",
+      "illumination": { "cl1": 46.478873, "cl2": 30.688493, "cm": null },
+      "steps": [
+        { "label": "L 52 mm", "nominal": 52, "f": { "il1": 78.95113, "il2": 102.053255, "il3": 24.870086, "pl": 24.87019 } },
+        { "label": "L 103 mm", "nominal": 103, "f": { "il1": 78.95113, "il2": 251.511399, "il3": 21.022186, "pl": 21.024318 } },
+        { "label": "L 206 mm", "nominal": 206, "f": { "il1": 78.95113, "il2": 2587.565103, "il3": 17.100192, "pl": 17.099839 } }
+      ],
+      "defaultStep": 1,
+      "apertures": { "cla": 2, "ola": 0, "saa": 0 },
+      "apertureMax": { "cla": 2 },
+      "description": "扫描线圈使探针逐行平移且始终平行光轴；后焦面投到探测器面，花样不随扫描移动，探测器信号逐点组成扫描像。"
+    }
+  ],
+  "specimen": {
+    "radius": 0.4,
+    "braggAngle": 0.05,
+    "maxScatterAngle": 0.38,
+    "regions": [
+      {
+        "id": "film",
+        "name_zh": "非晶支持膜",
+        "kind": "amorphous",
+        "shape": { "type": "circle", "center": [0, 0], "radius": 0.4 },
+        "z": "light",
+        "thickness": 0.2
+      },
+      {
+        "id": "grain-a",
+        "name_zh": "晶粒 A",
+        "kind": "crystal",
+        "shape": { "type": "polygon", "points": [[-0.22, 0.02], [-0.06, 0.06], [-0.02, 0.2], [-0.16, 0.24], [-0.26, 0.14]] },
+        "z": "medium",
+        "thickness": 0.6,
+        "beams": [
+          { "azimuth": 0, "order": 1, "intensity": 0.5 },
+          { "azimuth": 180, "order": 1, "intensity": 0.5 },
+          { "azimuth": 0, "order": 2, "intensity": 0.15 },
+          { "azimuth": 180, "order": 2, "intensity": 0.15 }
+        ]
+      },
+      {
+        "id": "grain-b",
+        "name_zh": "晶粒 B",
+        "kind": "crystal",
+        "shape": { "type": "polygon", "points": [[0.02, 0.04], [0.2, 0], [0.26, 0.14], [0.14, 0.24], [0.04, 0.18]] },
+        "z": "medium",
+        "thickness": 0.6,
+        "beams": [{ "azimuth": 60, "order": 1, "intensity": 0.45 }, { "azimuth": 240, "order": 1, "intensity": 0.45 }]
+      },
+      {
+        "id": "grain-c",
+        "name_zh": "晶粒 C",
+        "kind": "crystal",
+        "shape": { "type": "polygon", "points": [[-0.12, -0.06], [0.08, -0.04], [0.12, -0.2], [-0.04, -0.26], [-0.16, -0.18]] },
+        "z": "medium",
+        "thickness": 0.6,
+        "beams": [
+          { "azimuth": 90, "order": 1, "intensity": 0.4 },
+          { "azimuth": 270, "order": 1, "intensity": 0.4 },
+          { "azimuth": 150, "order": 1, "intensity": 0.2 }
+        ]
+      },
+      {
+        "id": "heavy",
+        "name_zh": "重元素颗粒",
+        "kind": "amorphous",
+        "shape": { "type": "circle", "center": [0.2, -0.14], "radius": 0.04 },
+        "z": "heavy",
+        "thickness": 0.4
+      },
+      {
+        "id": "light",
+        "name_zh": "轻元素颗粒",
+        "kind": "amorphous",
+        "shape": { "type": "circle", "center": [-0.22, -0.12], "radius": 0.04 },
+        "z": "light",
+        "thickness": 0.4
+      },
+      { "id": "hole", "name_zh": "孔", "kind": "hole", "shape": { "type": "circle", "center": [0.17, -0.27], "radius": 0.05 } }
+    ]
+  }
+}

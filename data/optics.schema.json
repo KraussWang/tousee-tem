@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TEM 电子光学模型 optics.json（PRD-v2 附录 A）",
+  "type": "object",
+  "required": ["source", "scan", "elements", "apertures", "detectors", "modes", "specimen"],
+  "properties": {
+    "meta": { "type": "object" },
+    "source": {
+      "type": "object",
+      "required": ["radius", "halfAngle"],
+      "properties": { "radius": { "type": "number" }, "halfAngle": { "type": "number" } }
+    },
+    "scan": {
+      "type": "object",
+      "required": ["radius"],
+      "properties": { "radius": { "type": "number", "exclusiveMinimum": 0, "description": "STEM 扫描半幅：试样面上探针最大偏移 mm，不超过 specimen.radius" } }
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "z"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "type": { "enum": ["source", "lens", "aperture", "deflector", "specimen", "detector", "screen"] },
+          "z": { "oneOf": [
+            { "type": "number" },
+            { "type": "object", "required": ["ref"], "properties": { "ref": { "type": "string", "description": "parts.json 的热点 id 或 opticalPlanes id" } } }
+          ] },
+          "name_zh": { "type": "string" },
+          "clearRadius": { "type": "number", "exclusiveMinimum": 0 },
+          "maxExcitation": { "type": "number", "exclusiveMinimum": 0 },
+          "group": { "type": "string", "description": "共用一个激磁滑杆的透镜组，如 ol" },
+          "f": { "type": "number", "exclusiveMinimum": 0, "description": "各模式通用的预设焦距 mm（物镜前场 / 后场），由求解器写入" }
+        }
+      }
+    },
+    "apertures": {
+      "type": "object",
+      "required": ["cla", "ola", "saa"],
+      "additionalProperties": {
+        "type": "object",
+        "required": ["radii", "host"],
+        "properties": {
+          "radii": { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4 },
+          "host": { "type": "string" },
+          "name_zh": { "type": "string" }
+        }
+      }
+    },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "rInner", "rOuter", "name_zh"],
+        "properties": {
+          "id": { "enum": ["bf", "abf", "adf", "haadf"] },
+          "rInner": { "type": "number" }, "rOuter": { "type": "number" },
+          "name_zh": { "type": "string" }, "note": { "type": "string" }
+        }
+      }
+    },
+    "modes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "group", "name_zh", "illumination", "steps", "defaultStep", "apertures"],
+        "properties": {
+          "id": { "enum": ["tem-image", "tem-diff", "stem-ronchi", "stem-scan"] },
+          "group": { "enum": ["tem", "stem"] },
+          "name_zh": { "type": "string" },
+          "illumination": { "type": "object", "additionalProperties": { "type": ["number", "null"] }, "description": "cl1 / cl2 / cm 的焦距 mm；null = 关闭" },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["label", "f"],
+              "properties": {
+                "label": { "type": "string" },
+                "nominal": { "type": "number", "description": "标称 M 或 L；求解器的输入" },
+                "f": { "type": "object", "additionalProperties": { "type": ["number", "null"] }, "description": "il1 / il2 / il3 / pl 的焦距 mm" }
+              }
+            }
+          },
+          "defaultStep": { "type": "integer" },
+          "apertures": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 4 }, "description": "0 = 退出，1–4 = 档位" },
+          "apertureMax": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 4 }, "description": "本模式开放的最高档位，缺省 4" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "specimen": {
+      "type": "object",
+      "required": ["radius", "braggAngle", "regions"],
+      "properties": {
+        "radius": { "type": "number" },
+        "braggAngle": { "type": "number" },
+        "maxScatterAngle": { "type": "number", "description": "STEM 高角散射追迹的最大散射角 rad（相对光轴）" },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "kind", "shape"],
+            "properties": {
+              "id": { "type": "string" },
+              "name_zh": { "type": "string" },
+              "kind": { "enum": ["crystal", "amorphous", "hole"] },
+              "shape": { "oneOf": [
+                { "type": "object", "required": ["type", "center", "radius"], "properties": { "type": { "const": "circle" }, "center": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }, "radius": { "type": "number" } } },
+                { "type": "object", "required": ["type", "points"], "properties": { "type": { "const": "polygon" }, "points": { "type": "array", "items": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }, "minItems": 3 } } }
+              ] },
+              "beams": { "type": "array", "items": { "type": "object", "required": ["azimuth", "order", "intensity"], "properties": { "azimuth": { "type": "number" }, "order": { "type": "integer" }, "intensity": { "type": "number" } } } },
+              "z": { "enum": ["light", "medium", "heavy"] },
+              "thickness": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

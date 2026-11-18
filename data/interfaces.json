@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "units": "mm",
+    "frame": "部件经 assemble_blender.py 定尺、定轴后、贴合前的局部坐标（vc 即其 datum 局部坐标；bino 为包围盒锚点坐标）",
+    "axes": "normal 为配合面外法线，up 为配合面内的参考方向；装配时两面法线相对、up 重合。vc 安装座的 up 取斜面下坡方向，使 bino 顶部（目镜侧）朝操作者、不碰 pl",
+    "edit": "在 TEM_assembly.blend 中调整 Empty vc.bino_seat / bino.mount 后运行 scripts/capture_interfaces.py 回写"
+  },
+  "vc": {
+    "bino_seat": {
+      "point": [
+        26.09,
+        -222.63,
+        366.13
+      ],
+      "normal": [
+        -0.02,
+        -0.47,
+        0.88
+      ],
+      "up": [
+        -0.04,
+        -0.88,
+        -0.47
+      ]
+    }
+  },
+  "bino": {
+    "mount": {
+      "point": [
+        -0.37,
+        0.0,
+        -15.6
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}
